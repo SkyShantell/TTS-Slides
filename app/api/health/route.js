@@ -17,7 +17,7 @@ export async function GET(){
   try{
     if(!checks.blob_store) throw new Error('No Blob store environment is connected.');
     await list({limit:1});
-    await put('diagnostics/health.json',JSON.stringify({ok:true,checked_at:new Date().toISOString()}),{access:'public',addRandomSuffix:false,allowOverwrite:true,contentType:'application/json'});
+    await put(`diagnostics/health-${Date.now()}.json`,JSON.stringify({ok:true,checked_at:new Date().toISOString()}),{access:'public',addRandomSuffix:false,contentType:'application/json'});
     checks.blob_write=true;
   }catch(e){errors.push(`Blob: ${e.message||e}`);}
   try{
