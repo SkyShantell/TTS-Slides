@@ -1,0 +1,3 @@
+import fs from 'fs/promises'; import path from 'path'; import { NextResponse } from 'next/server';
+export const runtime='nodejs';
+export async function GET(req){ try{ const key=new URL(req.url).searchParams.get('key')||''; if(key.includes('..'))throw new Error('Bad key'); const p=path.join(process.cwd(),'.localdata',key); const b=await fs.readFile(p); const ext=path.extname(p).toLowerCase(); const ct=ext==='.json'?'application/json':ext==='.png'?'image/png':ext==='.webp'?'image/webp':'image/jpeg'; return new NextResponse(b,{headers:{'Content-Type':ct,'Cache-Control':'no-store'}}); }catch{return new NextResponse('Not found',{status:404});} }
