@@ -1,123 +1,72 @@
-# TTS Slides / Carousel Factory — Skill Engine V5
+# TTS Slides — V6 Reference-Style Edition
 
-This V5 keeps the Vercel-native Phase 1 infrastructure but replaces the generic campaign brain with the user's original `tiktok-product-slides.skill` creative system.
+V6 changes the creative system from loose prompt presets into reference-driven production systems based on the user's Google Drive examples.
 
-## What V5 changes
+## What V6 changes
 
-### Original creative system is now primary
+- Reference Style is now the PRIMARY campaign control.
+- Each reference style controls:
+  - default slide count
+  - slide-type flow
+  - copy rhythm / text density
+  - character/photo treatment
+  - text renderer
+  - composition/layout exceptions
+- Representative user-provided reference images are bundled under `public/reference-styles/` and are used only on appropriate visual slide types as high-level composition/style references.
+- Image prompts explicitly tell the image model to ignore all reference text, products, logos, exact people/scenes, and copyrighted character designs.
+- Exact overlay text is still rendered programmatically after generation.
+- Reference Style Character mode lets each preset determine whether it needs a clean cartoon creator, original adult-animation-inspired cast, realistic UGC creator, or no recurring person.
 
-The Campaign Builder now uses:
+## Reference systems
 
-- Master A — Signs & Solution
-- Master B — Social Story + Product
-- Master C — Skincare Education
-- Gadget / Tool Story
-- Story Hybrid (original slide system + secondary Greymike-style angle)
-- Auto — Pick Best
+The Drive root contained nine named folders (two different folders are both named as Style 3 variants), so V6 preserves all nine rather than dropping one:
 
-The app no longer treats generic Greymike-style skeletons as the main deck architecture. They are secondary angle mechanisms only.
+1. Style 1 — Cartoon Signs → UGC
+2. Style 2 — Animated Education
+3. Style 3 — Two-Character Social Dialogue
+4. Style 3B — Realistic Editorial Macro
+5. Style 4 — Clean Animated Signs
+6. Style 5 — Realistic Problem Cover
+7. Style 6 — Two-Slide Fashion
+8. Style 7 — Problem → Solution
+9. Style 8 — Mobile Chat Story
 
-### Slide types are explicit
+## New special renderers
 
-Each planned slide now receives a source-system type such as:
+- Editorial serif problem copy with colored numbered emphasis
+- Editorial emphasis hooks with black + red/burgundy hierarchy
+- White product pill labels
+- Speaker-separated outlined dialogue copy
+- Blue italic fashion headline treatment
+- Generic mobile-chat UI built programmatically (not branded as Snapchat)
+- Problem/Solution split labels + red arrow
 
-- N1 Character Hook
-- N2 Problem Character
-- N3A Problem Dialogue Scene
-- N3B Resolution Dialogue Scene
-- N3C Continuous Scene Sequence
-- N4 Feature Product Shot
-- N5 Ingredient / Feature Reveal
-- N6 UGC Hold & Tell
-- N7 How-To / Routine
-- N8 CTA Product Closer
-- N10 Social Proof / Fact
-- N11 Secret Tip
+## Generation rules
 
-The older 4-panel/grid types are intentionally not defaulted because the current project rule is one complete scene per slide / no collage.
+- Default final ratio: 3:4
+- One complete scene per slide by default
+- Reference-specific layout exceptions only:
+  - Style 5 cover: controlled 2×2 issue montage
+  - Style 7 opener: controlled vertical problem/solution split
+  - Style 8 opener: one generic chat screen with one embedded UGC photo
+- The image model is told to generate NO text; exact copy is added afterward.
+- Product-visible slides use the saved SocialVault product references as packaging source of truth.
+- Style reference images are used only for high-level composition/treatment and never as product/identity source of truth.
 
-### Dani system restored
+## Deployment
 
-Dani is available as the default character preset with:
+Upload the CONTENTS of this folder to the root of the existing GitHub repository and commit to `main`.
 
-- locked identity description
-- expression IDs E1–E6
-- pose IDs P1–P6
-- flat/cel, editorial, original animated-dialogue and premium-3D rendering directions
+Important:
+- `proxy.js` should exist.
+- `middleware.js` should NOT exist.
+- Keep your existing Vercel environment variables and Blob connection.
+- No custom Vercel start command is required.
 
-Custom recurring character and no-character modes are also available.
-
-### Copy system restored
-
-Slides can use:
-
-- Type 1 — Editorial Problem
-- Type 2 — Hook Keyword (deep burgundy editorial emphasis)
-- Type 3 — White Pill Box
-- Type 4 — Raw White Outline
-- Type 5 — Product/Variant Label
-
-The exact-text renderer now changes typography based on that copy style instead of applying the same white headline treatment to every slide.
-
-### Old dataset habits are gated rather than blindly hard-coded
-
-The app does NOT automatically invent or force:
-
-- “they taste like sweets”
-- flavor ratings
-- sale/free shipping
-- fake urgency
-- reviews/statistics
-- “combine with a healthy lifestyle”
-
-Those are only used when supported by the listing/user input or when the user explicitly asks.
-
-## Existing Phase 1 features retained
-
-- SocialVault TikTok Shop importer
-- manual product-reference selection
-- product library
-- GPT structured concept + slide planning
-- GPT Image product-reference generation
-- exact post-generation text rendering
-- per-slide regenerate
-- text-only re-render
-- upload replacement image
-- Vercel Blob persistence
-- unique/versioned Blob filenames (no overwrite collision dependency)
-- dedupe latest product/campaign record by ID
-- campaign ZIP export
-- 3:4 default, plus 9:16 and 4:5
-
-## Deploy / update existing Vercel project
-
-Use the SAME GitHub repo and SAME Vercel project.
-
-1. Replace the repo contents with the contents of this V5 folder.
-2. Important: root should contain `proxy.js` and MUST NOT contain `middleware.js`.
-3. Commit/push to `main`.
-4. Vercel will redeploy automatically.
-
-Keep existing environment variables / Blob connection:
-
+Environment variables:
 - `OPENAI_API_KEY`
 - `SOCIAVAULT_API_KEY`
-- `OPENAI_TEXT_MODEL`
-- `OPENAI_IMAGE_MODEL`
-- Vercel Blob connection / token
+- `OPENAI_TEXT_MODEL=gpt-5.6-sol`
+- `OPENAI_IMAGE_MODEL=gpt-image-2`
 
-No custom Start Command is needed.
-
-## Suggested first test
-
-Use the same Beet Root product that exposed the weak generic campaign issue.
-
-In Campaign Builder:
-
-- Deck formula: `Master A — Signs & Solution`
-- Visual style: `Mixed Illustrated + UGC`
-- Character: `Dani — Original Skill Default` (or No Recurring Character if not appropriate)
-- Aspect: `3:4`
-- Slides: `8`
-
-Generate concepts, pick one, and inspect the resulting slide plan BEFORE generating images. The plan should now visibly alternate between character/problem slide types and later real-product UGC types rather than producing generic buyer-guide concepts.
+Vercel Blob remains the persistent store.
