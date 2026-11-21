@@ -17,6 +17,8 @@ RUN mkdir -p /opt/youtube-niche-finder && cd /opt/youtube-niche-finder \
     && git fetch --depth 1 origin "${UPSTREAM_SHA}" \
     && git checkout -q FETCH_HEAD \
     && rm -rf .git
+COPY patch_static_auth.py /opt/patch_static_auth.py
+RUN python /opt/patch_static_auth.py
 RUN pip install -r /opt/youtube-niche-finder/backend/requirements.txt
 COPY entrypoint.sh /opt/niche-entrypoint.sh
 RUN chmod 755 /opt/niche-entrypoint.sh \
