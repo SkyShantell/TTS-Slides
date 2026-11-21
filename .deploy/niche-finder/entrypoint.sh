@@ -2,6 +2,8 @@
 set -eu
 case "${SERVICE_ROLE:-web}" in
   web)
+    # Initialize schema before creating the first account (fresh PostgreSQL is empty).
+    python -c 'import infrastructure.postgres as db; db.init_db()'
     if [ -n "${NF_ADMIN_EMAIL:-}" ] && [ -n "${NF_BOOTSTRAP_PASSWORD:-}" ]; then
       if printf '%s\n' "$NF_BOOTSTRAP_PASSWORD" | python cli.py create-user "$NF_ADMIN_EMAIL" --admin --password-stdin; then
         echo "Initial admin account created."
